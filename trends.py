@@ -1,6 +1,8 @@
-from pygit2 import Repository, GIT_SORT_TOPOLOGICAL
+from click.types import STRING
+from pygit2 import Repository, GIT_SORT_TOPOLOGICAL, discover_repository
 import datetime as dt
 import pytz
+import click
 
 
 class workHours:
@@ -65,11 +67,9 @@ def addToCommitHour(month, commitDate):
     month.addCommit(day, hour)
     return month
 
-
-def main():
+def analyse(value):
+    repo = Repository(value)
     # grab the repo name from the user
-    repo = Repository('')
-
     collaraborators = []
 
     # TODO: set the time zone from env
@@ -77,6 +77,7 @@ def main():
     currentMonth = 0
     setFirst = False
     for commit in repo.walk(repo.head.target, GIT_SORT_TOPOLOGICAL):
+        print('loiop;ing')
         commitDate = dt.datetime.fromtimestamp(
             commit.commit_time, pytz.timezone('Asia/Kuala_Lumpur'))
         if setFirst == False:
@@ -97,7 +98,15 @@ def main():
         addToCommitHour(coll.month[currentMonth], commitDate)
         # coll.addToWeekDays(currentMonth, 1)
 
-    print(collaraborators)
+    click.echo(collaraborators)
 
+@click.command()
+@click.argument("path", type=STRING)
 
-main()
+def cli(path):
+    repo_path = discover_repository(path)
+    if not repo_path:
+        return click.echo('please type a valid git repo path')
+    else:
+        analyse(path)
+    
