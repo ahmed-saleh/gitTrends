@@ -3,6 +3,7 @@ from pygit2 import Repository, GIT_SORT_TOPOLOGICAL, discover_repository
 import datetime as dt
 import pytz
 import click
+import requests, jsonpickle
 
 
 class workHours:
@@ -77,7 +78,6 @@ def analyse(value):
     currentMonth = 0
     setFirst = False
     for commit in repo.walk(repo.head.target, GIT_SORT_TOPOLOGICAL):
-        print('loiop;ing')
         commitDate = dt.datetime.fromtimestamp(
             commit.commit_time, pytz.timezone('Asia/Kuala_Lumpur'))
         if setFirst == False:
@@ -98,7 +98,10 @@ def analyse(value):
         addToCommitHour(coll.month[currentMonth], commitDate)
         # coll.addToWeekDays(currentMonth, 1)
 
-    click.echo(collaraborators)
+    pload = jsonpickle.encode(collaraborators, unpicklable=False)
+    r =requests.get('http://localhost:4200/', params=pload, verify=False)
+    print(r.text)
+
 
 @click.command()
 @click.argument("path", type=STRING)
@@ -109,4 +112,6 @@ def cli(path):
         return click.echo('please type a valid git repo path')
     else:
         analyse(path)
-    
+
+if __name__ == '__main__':
+    cli()
