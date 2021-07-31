@@ -2,8 +2,9 @@ from click.types import STRING
 from pygit2 import Repository, GIT_SORT_TOPOLOGICAL, discover_repository
 import datetime as dt
 import pytz
-import click
-import requests, jsonpickle
+import click, jsonpickle
+from jinja2 import Environment, PackageLoader
+import os, webbrowser
 
 
 class workHours:
@@ -20,9 +21,11 @@ class Month:
     def __init__(self) -> None:
         self.weekDays = workHours()
         self.weekends = workHours()
+        self.total_per_month = 0
 
     def addCommit(self, name, hour):
         self.__dict__[name].increment(hour)
+        self.total_per_month +=1
 
 
 class Author:
@@ -96,11 +99,24 @@ def analyse(value):
 
         # analysis for the work time
         addToCommitHour(coll.month[currentMonth], commitDate)
-        # coll.addToWeekDays(currentMonth, 1)
 
-    pload = jsonpickle.encode(collaraborators, unpicklable=False)
-    r =requests.get('http://localhost:4200/', params=pload, verify=False)
-    print(r.text)
+    output = jsonpickle.encode(collaraborators, unpicklable=False)
+    # TODO: make the port variable
+    root = os.path.dirname(os.path.abspath(__file__))
+    filename = os.path.join(root, 'output', 'index.html')
+
+    # filename = os.path.join(root, 'html', 'index.html')
+    env = Environment(loader=PackageLoader(__name__))
+    template = env.get_template('index.html')
+    with open(filename, 'w') as fh:
+        fh.write(template.render(
+            h1 = "Results",
+            data=jsonpickle.decode(output)
+        ))
+
+    webbrowser.open('file://' + os.path.realpath(filename))
+
+    print('done');
 
 
 @click.command()

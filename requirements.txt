@@ -3,3 +3,4 @@ pytz
 click
 jsonpickle
 requests
+jinja2
