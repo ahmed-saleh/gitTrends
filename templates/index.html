@@ -1,0 +1,37 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<!-- <h1>{{ h1 }}</h1> -->
+ 
+<div class=raw>
+  {% for author in data %}
+      <div class="col-4" id='author'>
+        <span class="md-2">{{ author.name }}</span> <br/>
+        <span>{{ author.email }}</span>
+      </div>
+      <div id='work' class="col-8"> 
+        <div class="raw">
+          {% for m in author.month | reverse %}
+          <div class="col-12">
+              <th class="col-6 text-center">Week days</th>
+              <th></th>
+              <th></th>
+              <th class="col-6 text-center">Weekends</th>
+              <th></th>
+              <th></th>
+              <tr>
+                <td class="col-2">{{m.weekDays.morning}}</td>
+                <td class="col-2">{{m.weekDays.afterWork}}</td>
+                <td class="col-2">{{m.weekDays.midNight}}</td>
+                <td class="col-2">{{m.weekends.morning}}</td>
+                <td class="col-2">{{m.weekends.afterWork}}</td>
+                <td class="col-2">{{m.weekends.midNight}}</td>
+              </tr>
+          </div>
+          {% endfor %}
+        </div>
+    </div>
+  {% endfor %} 
+</div>
+
+
+<!-- {{data}} -->
