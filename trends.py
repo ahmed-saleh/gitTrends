@@ -5,6 +5,7 @@ import pytz
 import click, jsonpickle
 from jinja2 import Environment, PackageLoader
 import os, webbrowser
+import calendar
 
 
 class workHours:
@@ -18,14 +19,18 @@ class workHours:
 
 
 class Month:
-    def __init__(self) -> None:
+    def __init__(self):
         self.weekDays = workHours()
         self.weekends = workHours()
         self.total_per_month = 0
+        self.month_name = ''
 
     def addCommit(self, name, hour):
         self.__dict__[name].increment(hour)
         self.total_per_month +=1
+
+    def setMonthName(self, name):
+        self.month_name = name
 
 
 class Author:
@@ -34,9 +39,9 @@ class Author:
         self.email = email
         self.month = [Month() for i in range(6)]
 
-    # TODO: update this debug code
-    def __repr__(self) -> str:
-        return self.name + ' ' + str(self.month[3].weekDays.midNight)
+    # # TODO: update this debug code
+    # def __repr__(self) -> str:
+    #     return self.name + ' ' + str(self.month[3].weekDays.midNight)
 
     def addToWeekDays(self, targetMonth, num):
         self.month[targetMonth].weekDays += num
@@ -44,7 +49,7 @@ class Author:
     def addToWeekends(self, targetMonth, num):
         self.month[targetMonth].weekends += num
 
-
+# adding of a collaborators without duplicating
 def addCollab(list, name, email):
 
     for i in list:
@@ -55,11 +60,13 @@ def addCollab(list, name, email):
     return list[len(list) - 1]
 
 
+# adding the hour to the correct bucket
 def addToCommitHour(month, commitDate):
+    #TODO: verify this logic
     if commitDate.weekday() > 4:
-        day = 'weekDays'
-    else:
         day = 'weekends'
+    else:
+        day = 'weekDays'
 
     if commitDate.hour in range(0, 8):
         hour = 'midNight'
@@ -97,6 +104,8 @@ def analyse(value):
         coll = addCollab(collaraborators, commit.author.name,
                          commit.author.email)
 
+        #set the month name
+        coll.month[currentMonth].setMonthName(calendar.month_name[commitDate.month])
         # analysis for the work time
         addToCommitHour(coll.month[currentMonth], commitDate)
 
