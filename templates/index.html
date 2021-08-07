@@ -1,37 +1,121 @@
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<!-- <h1>{{ h1 }}</h1> -->
- 
-<div class=raw>
-  {% for author in data %}
-      <div class="col-4" id='author'>
-        <span class="md-2">{{ author.name }}</span> <br/>
-        <span>{{ author.email }}</span>
+<!DOCTYPE html>
+<header>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <style>
+    .scroll {
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+    .card {
+      display: inline-block;
+    }
+    .groove {
+      border-style: groove;
+    }
+    .morning {
+      background-image: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url(../templates/morning.svg);
+      background-size: 100% auto;
+      background-repeat: no-repeat;
+      display: inline-block;
+      height: 50px;
+      width: 50px;
+      text-align: center;
+vertical-align: middle;
+line-height: 50px;
+  margin: 20px;
+
+    }
+    .afternoon {
+      background-image: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url(../templates/sunrise.png);
+      background-size: 100% auto;
+      background-repeat: no-repeat;
+      display: inline-block;
+      height: 50px;
+      width: 50px;
+      text-align: center;
+vertical-align: middle;
+line-height: 50px;
+  margin: 20px;
+    }
+    .night {
+      background-image: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)), url(../templates/night.svg);
+      background-size: 100% auto;
+      background-repeat: no-repeat;
+      display: inline-block;
+      height: 50px;
+      width: 50px;
+      text-align: center;
+      vertical-align: middle;
+      line-height: 50px;
+    margin: 20px;
+    }
+    a {
+      font-size: 30px;
+    }
+    h4 {
+      text-align: center;
+    }
+    h5 {
+      text-align: center;
+    }
+    .author-card {
+      margin-top: 10px;
+      margin-left: 10px;
+    }
+  </style>
+</header> 
+<body>
+  <div class=raw>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+          <a class="navbar-brand" style="padding-left: 2px; color: white;">Results</a>
       </div>
-      <div id='work' class="col-8"> 
-        <div class="raw">
-          {% for m in author.month | reverse %}
-          <div class="col-12">
-              <th class="col-6 text-center">Week days</th>
-              <th></th>
-              <th></th>
-              <th class="col-6 text-center">Weekends</th>
-              <th></th>
-              <th></th>
-              <tr>
-                <td class="col-2">{{m.weekDays.morning}}</td>
-                <td class="col-2">{{m.weekDays.afterWork}}</td>
-                <td class="col-2">{{m.weekDays.midNight}}</td>
-                <td class="col-2">{{m.weekends.morning}}</td>
-                <td class="col-2">{{m.weekends.afterWork}}</td>
-                <td class="col-2">{{m.weekends.midNight}}</td>
-              </tr>
+  </nav>
+  </div>
+  <div class="row">
+    {% for author in data %}
+    <div class="col-sm-3">
+      <div class="row author-card">
+        <div class="col-sm-2" style="color: gray;">name: </div>
+        <div class="col-sm-10">{{author.name}}</div>
+        <div class="w-100"></div>
+        <div class="col-sm-2" style="color: gray;">email: </div>
+        <div class="col-sm-10">{{author.email}}</div>
+      </div>
+    </div>
+    <div class="col-sm-9 scroll">
+      <div class="col-sm-4">
+      {% for month in author.month %}
+      <div class="card groove">
+        <h4 style="background-color: lightgrey;">{{month.month_name}}</h4>
+        <div>
+          <h5>Week Days</h5>
+          <div class="raw">
+            <div>
+              <div class="col-4 morning"><a>{{month.weekDays.morning}}</a></div>
+              <div class="col-4 afternoon"><a>{{month.weekDays.afterWork}}</a></div>
+              <div class="col-4 night"><a>{{month.weekDays.midNight}}</a></div>
+            </div>
           </div>
-          {% endfor %}
+        </div>
+        <div>
+          <h5>Weekends</h5>
+          <div class="raw">
+            <div>
+              <div class="col-4 morning"><a>{{month.weekends.morning}}</a></div>
+              <div class="col-4 afternoon"><a>{{month.weekends.afterWork}}</a></div>
+              <div class="col-4 night"><a>{{month.weekends.midNight}}</a></div>
+            </div>
+          </div>
         </div>
     </div>
-  {% endfor %} 
-</div>
+    
 
-
+      {% endfor %}
+    </div>
+    </div>
+    {% endfor %}
+  </div>
+</body>
 <!-- {{data}} -->
