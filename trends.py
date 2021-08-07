@@ -34,10 +34,10 @@ class Month:
 
 
 class Author:
-    def __init__(self, name, email):
+    def __init__(self, name, email, months_range):
         self.name = name
         self.email = email
-        self.month = [Month() for i in range(6)]
+        self.month = [Month() for i in range(months_range)]
 
     # # TODO: update this debug code
     # def __repr__(self) -> str:
@@ -50,13 +50,13 @@ class Author:
         self.month[targetMonth].weekends += num
 
 # adding of a collaborators without duplicating
-def addCollab(list, name, email):
+def addCollab(list, name, email, months_range):
 
     for i in list:
         if (i.name == name or i.email == email):
             return i
 
-    list.append(Author(name, email))
+    list.append(Author(name, email, months_range))
     return list[len(list) - 1]
 
 
@@ -78,13 +78,15 @@ def addToCommitHour(month, commitDate):
     month.addCommit(day, hour)
     return month
 
-def analyse(value):
+##
+# script start
+##
+def analyse(value, months_range):
     repo = Repository(value)
-    # grab the repo name from the user
     collaraborators = []
 
     # TODO: set the time zone from env
-
+    # TODO: support accross years analysis
     currentMonth = 0
     setFirst = False
     for commit in repo.walk(repo.head.target, GIT_SORT_TOPOLOGICAL):
@@ -98,11 +100,11 @@ def analyse(value):
             currentMonth += 1
             inLoopMonth = commitDate.month
 
-        if(currentMonth > 5):
+        if(currentMonth > (months_range -1)):
             break
 
         coll = addCollab(collaraborators, commit.author.name,
-                         commit.author.email)
+                         commit.author.email, months_range)
 
         #set the month name
         coll.month[currentMonth].setMonthName(calendar.month_name[commitDate.month])
@@ -120,7 +122,8 @@ def analyse(value):
     with open(filename, 'w') as fh:
         fh.write(template.render(
             h1 = "Results",
-            data=jsonpickle.decode(output)
+            data=jsonpickle.decode(output),
+            repo_name=repo.describe
         ))
 
     webbrowser.open('file://' + os.path.realpath(filename))
@@ -130,13 +133,15 @@ def analyse(value):
 
 @click.command()
 @click.argument("path", type=STRING)
+@click.option('--m', '-months', default=6)
 
-def cli(path):
+
+def cli(path, m):
     repo_path = discover_repository(path)
     if not repo_path:
         return click.echo('please type a valid git repo path')
     else:
-        analyse(path)
+        analyse(path, m)
 
 if __name__ == '__main__':
     cli()
