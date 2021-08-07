@@ -8,9 +8,9 @@ Feel free to fork it and change whatever needed.
 #### run it
 you will need Python 3
 
-run `pip install -r requirements.txt`
-run  `python trends.py PATH`
-for help run `python trends.py --help`
+run `pip install -r requirements.txt` </br>
+run  `python trends.py PATH` </br>
+run `python trends.py --help`
 
 ##### note
 This is not to be used as performance tools of kpi measurements at any case, its simple script to show us how are commit times have changed.
